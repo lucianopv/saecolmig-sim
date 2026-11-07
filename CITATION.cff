@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+type: software
+title: "saecolmig-sim: design-based simulation of small area estimators of migration for Colombian municipalities"
+abstract: >-
+  R code for a design-based simulation that draws ECV 2024-style samples from
+  the CNPV 2018 census frame, fits area-level and sub-area small area
+  estimators of six migration outcomes for the 1,122 municipalities of
+  Colombia, and scores their point estimates and reported uncertainty against
+  the census values.
+authors:
+  - family-names: Perfetti Villa
+    given-names: Luciano
+version: 1.0.0
+license: GPL-2.0-or-later
+repository-code: "https://github.com/lucianopv/saecolmig-sim"
+keywords:
+  - small area estimation
+  - Fay-Herriot
+  - simulation
+  - survey sampling
+  - migration
+  - Colombia
