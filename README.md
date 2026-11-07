@@ -298,9 +298,9 @@ totals of each stratum; and the interval score of Gneiting and Raftery (2007).
 Deville, J.-C. and Särndal, C.-E. (1992). Calibration estimators in survey
 sampling. *Journal of the American Statistical Association* 87(418), 376-382.
 
-## Contributors
+## Authors
 
 - Luciano Perfetti Villa (author, maintainer)
-- David Newhouse (contributor)
+- David Newhouse (author)
 
 Repository: <https://github.com/lucianopv/saecolmig-sim>

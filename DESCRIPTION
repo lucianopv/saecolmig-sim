@@ -4,7 +4,7 @@ Title: SAE Colombia Migration 2026 Simulation Pipeline
 Version: 1.0.0
 Authors@R: c(
     person("Luciano", "Perfetti Villa", email = "lucianopv@gmail.com", role = c("aut", "cre")),
-    person("David", "Newhouse", role = "ctb"))
+    person("David", "Newhouse", role = "aut"))
 Description: Design-based simulation drawing ECV 2024-style samples from the
     CNPV 2018 census frame, fitting small area estimation methods to each
     sample and scoring their point and uncertainty estimates against the
