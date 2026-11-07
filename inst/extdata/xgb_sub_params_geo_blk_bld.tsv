@@ -1,0 +1,7 @@
+outcome	nrounds	eta	max_depth	min_child_weight	subsample	colsample_bytree	lambda	alpha
+migrated_last_12m	200	0.05	2	1	0.8	0.8	1	0
+migrated_internal_12m	200	0.05	3	1	0.8	0.8	1	0
+migrated_intl_12m	200	0.05	2	1	0.8	0.8	1	0
+pers_migrated_12m	200	0.1	2	1	0.8	0.8	1	0
+pers_migrated_internal_12m	200	0.1	2	1	0.8	0.8	1	0
+pers_migrated_intl_12m	200	0.02	2	1	0.8	0.8	1	0

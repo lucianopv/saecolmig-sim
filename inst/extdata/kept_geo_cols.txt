@@ -1,0 +1,9 @@
+ntl_mean_pw
+travel_time_city_pw
+terrain_ruggedness_pw
+dist_venezuela_border_km
+pop_density_2018
+cropland_share_pw
+forest_share_pw
+precip_annual_2018_pw
+precip_anomaly_2018_pw
