@@ -272,7 +272,16 @@ unset. The Bayesian tests need CmdStan installed and `CMDSTAN` set.
 
 ## Citation and licence
 
-Cite the software with the metadata in `CITATION.cff`.
+Cite the software with the metadata in `CITATION.cff`. Version 1.0.0 is
+deposited on Zenodo:
+
+> Perfetti Villa, L. and Newhouse, D. (2026). *saecolmig-sim: design-based
+> simulation of small area estimators of migration for Colombian
+> municipalities* (version 1.0.0). Zenodo.
+> <https://doi.org/10.5281/zenodo.24044560>
+
+The DOI <https://doi.org/10.5281/zenodo.24044559> resolves to the latest
+version.
 
 The package's own code is licensed under the GNU General Public License,
 version 2 or (at your option) any later version (`License: GPL (>= 2)`; the
