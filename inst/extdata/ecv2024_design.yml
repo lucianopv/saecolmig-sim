@@ -1,0 +1,182 @@
+# ECV 2024 sampling design parameters
+#
+# Source: DANE, Encuesta Nacional de Calidad de Vida (ECV) 2024, microdata
+# catalog 861 (https://microdatos.dane.gov.co/index.php/catalog/861), and its
+# DDI documentation (ddi-documentation-spanish-861.pdf). The DDI describes the
+# design but does not list per-stratum sample sizes (the "metodologia general
+# de la ECV" it cites is the fuller source); the per-stratum allocation shipped
+# in ecv2024_strata_realised.csv is the sample as realised in the released
+# microdata: the municipalities, segments and dwellings sampled in each stratum.
+
+# ---------------------------------------------------------------------------
+# Sampling design
+# ---------------------------------------------------------------------------
+#
+# DDI page 2-3 / 11:
+#   - probabilistic, multi-stage, stratified, clustered
+#   - 2 stages
+#   - UPM (Unidades Primarias de Muestreo) = municipalities
+#   - USM (Unidades Secundarias de Muestreo) = segments of ~10 contiguous
+#     dwellings ("conglomerados / segmentos / medidas de tamano")
+#   - All ~10 dwellings within a selected segment are surveyed
+#     (no third-stage household selection)
+# ---------------------------------------------------------------------------
+
+source:
+  publisher: "DANE"
+  catalog_url: "https://microdatos.dane.gov.co/index.php/catalog/861"
+  methodology_pdf: "ddi-documentation-spanish-861.pdf"
+  catalog_id: 861
+
+domains:
+  - national
+  - cabecera
+  - resto              # = centros poblados + rural disperso
+  - department
+  - dept_x_area        # department x (cabecera / resto)
+  - region             # 9 regions per DDI p.9
+                       # Antioquia, Bogota, San Andres, Valle del Cauca,
+                       # Caribe, Oriental, Central, Pacifica,
+                       # Orinoquia-Amazonia
+
+# ---------------------------------------------------------------------------
+# Stage 1: PPS without replacement of municipalities (UPM) within stratum.
+# Stratification of UPMs:
+#   - Within each department, municipalities are grouped:
+#       * Group 1 (forced inclusion): department capital
+#       * Group 2: metropolitan-area municipalities of the capital
+#       * Other groups: PCA-based clusters using IPM, its 15 indicators,
+#         and the urbanisation share, with municipal population as a target
+#         for "self-weighting" approximate equality across groups
+#   - Selection within stratum is done independently for cabecera vs resto
+#     (some municipalities are exclusive to one or the other domain).
+# ---------------------------------------------------------------------------
+stage1:
+  unit: municipality
+  selection: pps_wor                      # proportional-to-size, without replacement
+  size_variable: population_2018          # population from 2018 census projection
+  cabecera_resto_independent: true        # selection independent for cabecera/resto
+  stratification:
+    method: pca_grouping                  # PCA on IPM + 15 indicators + urbanisation
+    forced_inclusion: department_capital  # always selected
+    metro_area_stratum: true              # capital metro municipalities form their own
+                                          # stratum
+    target_self_weighted: true            # groups aim for similar total population
+
+# ---------------------------------------------------------------------------
+# Stage 2: systematic selection of ~10-dwelling segments within a selected
+# municipality. Implicit stratification by ordering the frame by sector ->
+# section -> manzana before applying the systematic step. Within each
+# selected municipality the frame is segmented so that each segment has ~10
+# dwellings on average. Segments are selected by area type:
+#   - cabecera
+#   - centro poblado
+#   - rural disperso
+# Method: "Fractional Interval Method" (DDI p.11) with PROC SURVEYSELECT in
+# SAS, ensuring a fixed sample size per stratum.
+# ---------------------------------------------------------------------------
+stage2:
+  unit: segment                           # ~10 contiguous dwellings
+  target_segment_size: 10                 # average dwellings per segment
+  selection: systematic_fractional        # Fractional Interval Method
+  ordering: ["sector", "seccion", "manzana"]   # implicit geographic stratification
+  area_type_stratification:
+    - cabecera
+    - centro_poblado
+    - rural_disperso
+  all_dwellings_in_segment_surveyed: true # no within-segment household selection
+
+# ---------------------------------------------------------------------------
+# No third stage: every dwelling in a selected segment is enumerated.
+# (Kept here as an explicit non-stage so downstream code knows there's no
+# household-level random selection to model.)
+# ---------------------------------------------------------------------------
+stage3:
+  unit: household
+  selection: census                       # all households in the dwelling
+  notes: "Every household and every person in the selected segment is enumerated."
+
+# ---------------------------------------------------------------------------
+# Stratum allocation (one row per stratum), read from
+# ecv2024_strata_realised.csv: the sample of the released microdata.
+# Realised in ECV 2024:
+#   - 357 strata (ESTRATO2020 values)
+#   - 636 municipalities sampled
+#   - 8,538 segments sampled
+#   - 85,106 dwellings, 85,387 households, 228,688 persons
+#   - n_psu per stratum: median 1, 75th pct 2, 95th pct 4, max 8
+# ---------------------------------------------------------------------------
+strata:
+  source_csv: "inst/extdata/ecv2024_strata_realised.csv"
+  stratum_col: "stratum"
+  n_psu_col:   "n_psu"
+
+# ---------------------------------------------------------------------------
+# Weights (DDI Ponderacion section, pp.12-14)
+#
+# Final weight wk = calibrated(dk), where dk is the basic weight:
+#   dk = PSUB * FCOB * FMUNI * FESTR
+#
+# - PSUB:  segment-level subsegmentation correction; rebalances when a
+#          segment is split because it grew. Capped at <= 1.5.
+# - FCOB = fcob1 * fcob2:
+#     fcob1 = 10 / (effective dwellings surveyed in segment)
+#     fcob2 = (segment dwellings - vacant) / segment dwellings
+# - FMUNI: segment -> municipality (cabecera or resto independently)
+#          = persons in mpio / persons in mpio sample
+# - FESTR: municipality -> stratum (cabecera or resto independently)
+#          = persons in stratum mpios / persons in stratum sample
+#
+# Calibration (wk):
+#   linear-assisted calibration (Deville & Sarndal) using DANE 2018
+#   population projections + the 2018 census + dwelling counts.
+#   Calibration cells per dwelling:
+#     - Sex: M, F (2)
+#     - Age groups in CABECERA: 0-12, 12-25, 25-55, 55+ (4)
+#     - Age groups in RESTO:    0-10, 10-25, 25-55, 55+ (4)
+#     -> 8 sex x age cells + 1 row for # of households per dwelling = 9 rows
+#     -> matrix columns = number of dwellings in sample.
+# ---------------------------------------------------------------------------
+weights:
+  basic_weight_components:
+    - PSUB           # subsegmentation, capped at 1.5
+    - FCOB           # coverage = fcob1 * fcob2
+    - FMUNI          # segment -> municipality
+    - FESTR          # municipality -> stratum
+  calibration:
+    method: linear_assisted          # Deville & Sarndal
+    auxiliary_source: 2018_census + dane_population_projections
+    cells:
+      sex: ["M", "F"]
+      age_groups_cabecera: ["0-11", "12-24", "25-54", "55+"]
+      age_groups_resto:    ["0-9",  "10-24", "25-54", "55+"]
+      include_households_per_dwelling: true
+    independent_for_cabecera_and_resto: true
+
+# ---------------------------------------------------------------------------
+# Calibration margins of the simulation. Raking the design weights to the
+# household and person totals of each stratum, from the census frame,
+# approximates the ECV's calibration; the simulation does not reproduce the
+# Deville-Sarndal linear calibration to sex x age cells, which needs the DANE
+# population projections.
+# ---------------------------------------------------------------------------
+calibration:
+  margins:
+    - stratum_households
+    - stratum_persons        # person totals per stratum
+  method_for_simulation: raking
+  notes: |
+    Raking to household counts AND person totals per stratum. This mirrors
+    the ECV's dual-level FEX_C (calibrated to person sex x age cells plus a
+    households-per-dwelling row, which makes the factor constant within the
+    household) at total-persons granularity. NA household sizes (0.066% of
+    CNPV households) contribute 0 to the person margin, mirroring the
+    na.rm = TRUE census totals.
+
+# ---------------------------------------------------------------------------
+# Field period
+# ---------------------------------------------------------------------------
+field_period:
+  start: "August 2024"
+  end:   "November 2025"
+  cycle: "single round"

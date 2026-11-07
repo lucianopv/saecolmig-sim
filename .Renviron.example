@@ -1,0 +1,7 @@
+# Folder that holds the census frame, covariates, samples and outputs.
+# output_path() resolves every data path under it.
+SAECOL_DATA_DIR=/path/to/data
+
+# Folder of the CmdStan installation used by the cmdstan backend. Naming it keeps
+# cmdstanr from probing for WSL on load, a probe that ends the R process on Linux.
+CMDSTAN=/path/to/.cmdstan/cmdstan-2.38.0

@@ -1,0 +1,7 @@
+# Hand-written; exports every object whose name does not start with a dot.
+exportPattern("^[^.]")
+S3method(print, ecv_design_spec)
+importFrom(data.table, data.table, fread, setkey, setnames, ":=")
+importFrom(arrow, read_parquet, write_parquet)
+importFrom(survey, svydesign, calibrate)
+importFrom(sampling, UPmaxentropy, inclusionprobabilities)

@@ -1,0 +1,56 @@
+Package: saecol2026
+Type: Package
+Title: SAE Colombia Migration 2026 Simulation Pipeline
+Version: 1.0.0
+Authors@R: c(
+    person("Luciano", "Perfetti Villa", email = "lucianopv@gmail.com", role = c("aut", "cre")),
+    person("David", "Newhouse", role = "ctb"))
+Description: Design-based simulation drawing ECV 2024-style samples from the
+    CNPV 2018 census frame, fitting small area estimation methods to each
+    sample and scoring their point and uncertainty estimates against the
+    census ground truth.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: false
+Depends:
+    R (>= 4.4.0)
+Imports:
+    arrow,
+    data.table,
+    exactextractr,
+    jsonlite,
+    parallel,
+    povmap,
+    sampling,
+    sf,
+    survey,
+    terra,
+    tibble,
+    tools,
+    yaml
+Suggests:
+    blackmarbler,
+    cmdstanr,
+    colmaps,
+    doSNOW,
+    emdi2,
+    geodata,
+    lwgeom,
+    malariaAtlas,
+    Matrix,
+    posterior,
+    rstan,
+    sae,
+    saeRobust,
+    spdep,
+    testthat (>= 3.0.0),
+    tipsae (== 1.0.3),
+    withr,
+    xgboost (== 3.1.2.1)
+Remotes:
+    lucianopv/emdi@4a50df5,
+    SSA-Statistical-Team-Projects/povmap@2b3959a,
+    nebulae-co/colmaps@e5aafff,
+    stan-dev/cmdstanr@da99e2b
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

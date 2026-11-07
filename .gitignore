@@ -1,0 +1,61 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+.Renviron
+
+# Data and outputs live outside the repository, under SAECOL_DATA_DIR
+data/
+outputs/
+samples/
+# Run and evaluation outputs of the README examples (--out=results/...)
+results/
+*.csv
+*.dta
+*.sav
+*.parquet
+*.rds
+*.RDS
+*.rda
+*.gpkg
+*.feather
+*.zip
+*.7z
+*.gz
+*.tar
+*.pdf
+
+# Exceptions: the two small aggregate tables shipped with the package
+!inst/extdata/ecv2024_muni_to_stratum.csv
+!inst/extdata/ecv2024_strata_realised.csv
+
+# Large binaries and model artefacts
+*.h5
+*.pkl
+*.joblib
+
+# cmdstanr compiled Stan binaries (machine-specific; the .stan sources are tracked)
+inst/stan/*
+!inst/stan/*.stan
+!inst/stan/tipsae/
+inst/stan/tipsae/*
+!inst/stan/tipsae/*.stan
+!inst/stan/tipsae/include/
+inst/stan/tipsae/include/*
+!inst/stan/tipsae/include/*.stan
+
+# Logs and system files
+*.log
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# testthat auto-generated problem snippets
+tests/testthat/_problems/

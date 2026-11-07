@@ -1,0 +1,17 @@
+^renv$
+^renv\.lock$
+^\.Rprofile$
+^\.Renviron\.example$
+^LICENSE$
+^data-raw$
+^Makefile$
+^METHODS\.md$
+^DATA_DICTIONARY\.md$
+^README\.md$
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.git.*
+^inst/stan/bayes_fh_heavy$
+^inst/stan/tipsae/global$
+^CITATION\.cff$
+^results$
